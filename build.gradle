@@ -1,0 +1,45 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'application'
+apply plugin: 'idea'
+
+group 'com.stagnationlab.pi4j'
+version '1.0.0'
+
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = 1.8
+
+//noinspection GroovyUnusedAssignment
+mainClassName = "com.stagnationlab.pi.App"
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://oss.sonatype.org/content/groups/public"
+    }
+}
+
+dependencies {
+    // pi4j
+    compile group: 'com.pi4j', name: 'pi4j-core', version: '1.1-SNAPSHOT'
+
+    // logging
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+// configure jar
+//noinspection GroovyAssignabilityCheck
+jar {
+    // set jar main class manifest
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+    // embed all the dependencies in the generated jar
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
